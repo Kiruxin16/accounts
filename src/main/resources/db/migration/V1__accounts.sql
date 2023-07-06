@@ -1,4 +1,4 @@
-CREATE TABLE accounts(
+CREATE TABLE client_accounts(
                 id bigserial PRIMARY KEY,
                 login VARCHAR(255),
                 keypass VARCHAR(255),
@@ -11,6 +11,7 @@ CREATE TABLE accounts(
 
 CREATE TABLE tickets(
                 id bigserial PRIMARY KEY,
-                account_id bigint REFERENCES accounts(id),
+                client_id bigint REFERENCES client_accounts(id),
+                discipline VARCHAR(255),
                 expired DATE
 );
