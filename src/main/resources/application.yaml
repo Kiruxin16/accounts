@@ -1,14 +1,14 @@
 server:
   port: 8189
   servlet:
-    context-path: /three-oceans.fitness/accounts
+    context-path: /three-oceans.fitness/account-service
 
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/accountsdb
     username: postgres
-    password: postgres
+    password: 123
   jpa:
     database: POSTGRESQL
     show-sql: true

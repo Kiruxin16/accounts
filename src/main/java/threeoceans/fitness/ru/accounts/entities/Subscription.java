@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Table(name = "tickets")
 @Data
 @NoArgsConstructor
-public class Ticket {
+public class Subscription {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
@@ -25,6 +25,8 @@ public class Ticket {
     @Column(name="discipline")
     private String discipline;
 
+    @Column(name="number_of_workouts")
+    private Integer numOfWorkouts;
 
     @Column(name="expired")
     private LocalDate expired;

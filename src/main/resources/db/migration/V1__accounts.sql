@@ -9,8 +9,9 @@ CREATE TABLE client_accounts(
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE tickets(
+CREATE TABLE subscriptions(
                 id bigserial PRIMARY KEY,
+                number_of_workouts int,
                 client_id bigint REFERENCES client_accounts(id),
                 discipline VARCHAR(255),
                 expired DATE

@@ -36,7 +36,7 @@ public class ClientAccount {
     private  String email;
 
     @OneToMany(mappedBy = "client",cascade = CascadeType.PERSIST)
-    private List<Ticket> tickets;
+    private List<Subscription> subscriptions;
 
 
     @CreationTimestamp
