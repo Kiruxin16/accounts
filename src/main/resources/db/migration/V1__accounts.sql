@@ -12,6 +12,7 @@ CREATE TABLE client_accounts(
 CREATE TABLE subscriptions(
                 id bigserial PRIMARY KEY,
                 number_of_workouts int,
+                workouts_reserved int,
                 client_id bigint REFERENCES client_accounts(id),
                 discipline VARCHAR(255),
                 expired DATE

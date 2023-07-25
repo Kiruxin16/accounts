@@ -36,6 +36,19 @@ public class ClientController {
     @PostMapping("/subscriptions/add")
     public void addSubscription(@RequestHeader(name = "login")String login,  @RequestBody SubscriptionDto subDto){}
 
+
+    @PostMapping("/subscriptions/subscribe")
+    public subSceduleResponse subscribeEvent(@RequestParam("login")String login,
+                                             @RequestParam("discipline")String discipline){
+        try{
+            return clientAccountService.subscribeAtEvent(login,discipline);
+        }catch (Exception e){
+            return null;
+        }
+
+
+    }
+
     @PostMapping("/subscriptions/change")
     public void changeNumOfWOuts(
             @RequestHeader(name = "login")String login,

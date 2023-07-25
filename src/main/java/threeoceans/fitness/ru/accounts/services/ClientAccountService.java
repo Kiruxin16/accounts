@@ -7,8 +7,10 @@ import threeoceans.fitness.ru.accounts.converters.ClientInfoConverter;
 import threeoceans.fitness.ru.accounts.converters.SubscriptionConverter;
 import threeoceans.fitness.ru.accounts.dto.*;
 import threeoceans.fitness.ru.accounts.entities.ClientAccount;
+import threeoceans.fitness.ru.accounts.entities.Subscription;
 import threeoceans.fitness.ru.accounts.repositories.ClientAccountRepository;
 
+import javax.swing.plaf.SeparatorUI;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -51,9 +53,71 @@ public class ClientAccountService {
         clientAccountRepository.save(resultAccount);
     }
 
+    @Transactional
     public void addSubscription(SubscriptionRequest subRequest){
-        ClientAccount client = clientAccountRepository.findByLogin(subRequest.getClient())
+        ClientAccount client = clientAccountRepository.findByLogin(subRequest.getClient()).get();
+        Subscription sub;
+        Optional<Subscription> subOpt=client.getSubscriptions().stream()
+                .filter(s ->subRequest.getDiscipline().equals(s.getDiscipline())).findFirst();
+        if(subOpt.isPresent()){
+            sub=subOpt.get();
+            sub.setNumOfWorkouts(sub.getNumOfWorkouts()+subRequest.getNumOfWorkouts());
+            sub.setExpired(subRequest.getExpired());
+        }else{
+            sub=new Subscription();
+            sub.setClient(client);
+            sub.setNumOfWorkouts(subRequest.getNumOfWorkouts());
+            sub.setDiscipline(subRequest.getDiscipline());
+            sub.setExpired(subRequest.getExpired());
+        }
+
+        subscriptionService.save(sub);
     }
+
+    public Optional<Subscription> getSubscription(String login, String discipline) {
+        ClientAccount client = clientAccountRepository.findByLogin(login).get();
+        return client.getSubscriptions().stream()
+                .filter(s -> discipline.equals(s.getDiscipline())).findFirst();
+    }
+
+    @Transactional
+    public subSceduleResponse subscribeAtEvent(String login, String discipline) throws Exception{
+        Subscription sub = getSubscription(login,discipline).orElseThrow(()-> new Exception() );
+        sub.setReserved(sub.getReserved()+1);
+        if (sub.getNumOfWorkouts()< sub.getReserved()){
+            throw new Exception();
+        }
+        subscriptionService.save(sub);
+        return new subSceduleResponse(sub.getId(),login);
+    }
+
+    @Transactional
+    public void changeNumOfWorkouts(String login, String discipline, int delta) throws Exception{
+        Subscription sub = getSubscription(login,discipline).orElseThrow(()-> new Exception() );
+        sub.setNumOfWorkouts(sub.getNumOfWorkouts()+delta);
+        if (sub.getNumOfWorkouts()< sub.getReserved()){
+            throw new Exception();
+        }
+        subscriptionService.save(sub);
+
+    }
+
+    public void unsunscribeAtEvent(Long subId){
+        Subscription sub = subscriptionService.findById(subId);
+        sub.setReserved(sub.getReserved()-1);
+    }
+
+    public void  confirmWorkout(Long subId){
+        Subscription sub = subscriptionService.findById(subId);
+        sub.setReserved(sub.getReserved()-1);
+        sub.setNumOfWorkouts(sub.getNumOfWorkouts()-1);
+        if(sub.getNumOfWorkouts()==0){
+            subscriptionService.deleteById(subId);
+        }else{
+            subscriptionService.save(sub);
+        }
+    }
+
 
 
 }

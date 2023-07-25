@@ -18,4 +18,6 @@ public class SubscriptionRequest {
     private LocalDate expired;
 
     private Integer numOfWorkouts;
+
+
 }
