@@ -43,7 +43,7 @@ public class ClientAccountService {
             resultAccount = new ClientAccount();
             Random random = new Random();
             resultAccount.setLogin(infoRequest.getLogin());
-            resultAccount.setKeypass(String.valueOf(random.nextDouble(8999999999d))+1000000000d);
+            resultAccount.setKeypass(String.valueOf(infoRequest.getLogin().hashCode()));
         } else {
             resultAccount=account.get();
             resultAccount.setUsername(infoRequest.getUsername());
@@ -85,8 +85,9 @@ public class ClientAccountService {
         Subscription sub = getSubscription(login,discipline).orElseThrow(()-> new Exception() );
         sub.setReserved(sub.getReserved()+1);
         if (sub.getNumOfWorkouts()< sub.getReserved()){
-            throw new Exception();
+            throw new Exception(); //количество тренировок не может быть меньше количества зарезервированных
         }
+
         subscriptionService.save(sub);
         return new subSceduleResponse(sub.getId(),login);
     }
@@ -96,9 +97,19 @@ public class ClientAccountService {
         Subscription sub = getSubscription(login,discipline).orElseThrow(()-> new Exception() );
         sub.setNumOfWorkouts(sub.getNumOfWorkouts()+delta);
         if (sub.getNumOfWorkouts()< sub.getReserved()){
-            throw new Exception();
+            throw new Exception(); //количество тренировок не может быть меньше количества зарезервированных
+
         }
-        subscriptionService.save(sub);
+        if (sub.getNumOfWorkouts()<0){
+            throw new Exception(); //у пользователя нет столько тренировок
+        }
+
+        if (sub.getNumOfWorkouts()==0){
+            subscriptionService.deleteById(sub.getId());
+        }else{
+            subscriptionService.save(sub);
+        }
+
 
     }
 
