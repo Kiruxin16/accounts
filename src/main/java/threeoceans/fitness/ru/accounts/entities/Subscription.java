@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "tickets")
+@Table(name = "subscriptions")
 @Data
 @NoArgsConstructor
 public class Subscription {

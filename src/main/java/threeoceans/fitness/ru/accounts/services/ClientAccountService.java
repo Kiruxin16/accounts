@@ -41,15 +41,14 @@ public class ClientAccountService {
         ClientAccount resultAccount;
         if (account.isEmpty()){
             resultAccount = new ClientAccount();
-            Random random = new Random();
             resultAccount.setLogin(infoRequest.getLogin());
             resultAccount.setKeypass(String.valueOf(infoRequest.getLogin().hashCode()));
         } else {
             resultAccount=account.get();
-            resultAccount.setUsername(infoRequest.getUsername());
-            resultAccount.setPhone(infoRequest.getPhone());
-            resultAccount.setEmail(infoRequest.getEmail());
         }
+        resultAccount.setUsername(infoRequest.getUsername());
+        resultAccount.setPhone(infoRequest.getPhone());
+        resultAccount.setEmail(infoRequest.getEmail());
         clientAccountRepository.save(resultAccount);
     }
 

@@ -27,15 +27,22 @@ public class ClientController {
         clientAccountService.createOrUpdateAccount(clientAccountDto);
     }
 
-    @PostMapping("/subscriptions/info")
+    @GetMapping("/subscriptions/info")
     public List<SubscriptionResponse> getClientSubscriptions(@RequestHeader(name="login")String login){
         return  clientAccountService.getClientSubscriptions(login);
     }
 
 
     @PostMapping("/subscriptions/add")
-    public void addSubscription(@RequestHeader(name = "login")String login,  @RequestBody SubscriptionDto subDto){}
+    public void addSubscription(@RequestHeader(name = "login")String login,  @RequestBody SubscriptionRequest subRequest){
+        clientAccountService.addSubscription(subRequest);
+    }
 
+
+    @PostMapping("/subscriptions/unsubscribe")
+    public void unsubscribeEvent(@RequestParam ("subId")Long subId){
+        clientAccountService.unsunscribeAtEvent(subId);
+    }
 
     @PostMapping("/subscriptions/subscribe")
     public subSceduleResponse subscribeEvent(@RequestParam("login")String login,
@@ -48,12 +55,23 @@ public class ClientController {
 
 
     }
+    @PostMapping("subscriptions/confirm")
+    public void confirmArrival(@RequestParam(name = "subId")Long subId){
+        clientAccountService.confirmWorkout(subId);
+    }
 
     @PostMapping("/subscriptions/change")
     public void changeNumOfWOuts(
-            @RequestHeader(name = "login")String login,
+            @RequestParam(name = "login")String login,
             @RequestParam("discipline")String disciplineName,
             @RequestParam("delta")int delta
-    ){}
+    ){
+        try{
+            clientAccountService.changeNumOfWorkouts(login,disciplineName,delta);
+        }catch (Exception e){
+
+        }
+
+    }
 
 }
