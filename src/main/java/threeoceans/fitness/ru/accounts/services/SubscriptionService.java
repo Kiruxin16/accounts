@@ -15,8 +15,17 @@ public class SubscriptionService {
     private final SubscriptionRepository subscriptionRepository;
 
 
-    public Optional<Subscription> getSubscriptionByClientId(Long id){
-        subscriptionRepository.findById()
+
+    public void save(Subscription sub){
+        subscriptionRepository.save(sub);
+    }
+
+    public Subscription findById(Long id){
+        return subscriptionRepository.findById(id).get();
+    }
+
+    public void deleteById(Long id){
+        subscriptionRepository.deleteById(id);
     }
 
 }

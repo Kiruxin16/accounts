@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "tickets")
+@Table(name = "subscriptions")
 @Data
 @NoArgsConstructor
 public class Subscription {
@@ -27,6 +27,9 @@ public class Subscription {
 
     @Column(name="number_of_workouts")
     private Integer numOfWorkouts;
+
+    @Column(name = "workouts_reserved")
+    private Integer reserved;
 
     @Column(name="expired")
     private LocalDate expired;
