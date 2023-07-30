@@ -12,8 +12,6 @@ public class ClientInfoRequest {
 
     private String login;
 
-    private  String keypass;
-
     private  String username;
 
     private String phone;
