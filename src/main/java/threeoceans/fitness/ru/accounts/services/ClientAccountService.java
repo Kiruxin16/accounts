@@ -42,7 +42,7 @@ public class ClientAccountService {
         if (account.isEmpty()){
             resultAccount = new ClientAccount();
             resultAccount.setLogin(infoRequest.getLogin());
-            resultAccount.setKeypass(String.valueOf(infoRequest.getLogin().hashCode()));
+            resultAccount.setKeypass(String.valueOf(Math.abs(infoRequest.getLogin().hashCode())));
         } else {
             resultAccount=account.get();
         }
