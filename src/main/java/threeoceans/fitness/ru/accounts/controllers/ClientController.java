@@ -45,10 +45,9 @@ public class ClientController {
     }
 
     @PostMapping("/subscriptions/subscribe")
-    public subSceduleResponse subscribeEvent(@RequestParam("login")String login,
-                                             @RequestParam("discipline")String discipline){
+    public SubScheduleResponse subscribeEvent(@RequestBody SubScheduleRequest subRequest){
         try{
-            return clientAccountService.subscribeAtEvent(login,discipline);
+            return clientAccountService.subscribeAtEvent(subRequest.getLogin(),subRequest.getDiscipline());
         }catch (Exception e){
             return null;
         }

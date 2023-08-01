@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class subSceduleResponse {
+public class SubScheduleResponse {
     private Long subId;
-    private String Login;
+    private String userName;
 }

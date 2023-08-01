@@ -10,10 +10,8 @@ import threeoceans.fitness.ru.accounts.entities.ClientAccount;
 import threeoceans.fitness.ru.accounts.entities.Subscription;
 import threeoceans.fitness.ru.accounts.repositories.ClientAccountRepository;
 
-import javax.swing.plaf.SeparatorUI;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -80,15 +78,18 @@ public class ClientAccountService {
     }
 
     @Transactional
-    public subSceduleResponse subscribeAtEvent(String login, String discipline) throws Exception{
-        Subscription sub = getSubscription(login,discipline).orElseThrow(()-> new Exception() );
+    public SubScheduleResponse subscribeAtEvent(String login, String discipline) throws Exception{
+        ClientAccount client =clientAccountRepository.findByLogin(login).get();
+        Subscription sub = client.getSubscriptions().stream()
+                .filter(s -> discipline.equals(s.getDiscipline())).findFirst()
+                .orElseThrow(()-> new Exception() );
         sub.setReserved(sub.getReserved()+1);
         if (sub.getNumOfWorkouts()< sub.getReserved()){
             throw new Exception(); //количество тренировок не может быть меньше количества зарезервированных
         }
 
         subscriptionService.save(sub);
-        return new subSceduleResponse(sub.getId(),login);
+        return new SubScheduleResponse(sub.getId(),client.getUsername());
     }
 
     @Transactional
