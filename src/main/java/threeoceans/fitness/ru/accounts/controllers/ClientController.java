@@ -39,8 +39,8 @@ public class ClientController {
     }
 
 
-    @PostMapping("/subscriptions/unsubscribe")
-    public void unsubscribeEvent(@RequestParam ("subId")Long subId){
+    @PostMapping("/subscriptions/unsubscribe/{subId}")
+    public void unsubscribeEvent(@PathVariable ("subId")Long subId){
         clientAccountService.unsunscribeAtEvent(subId);
     }
 

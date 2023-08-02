@@ -10,6 +10,6 @@ import java.util.Optional;
 @Repository
 public interface ClientAccountRepository extends JpaRepository<ClientAccount,Long> {
 
-    public Optional<ClientAccount> findByLogin(String login);
+    Optional<ClientAccount> findByLogin(String login);
 
 }
