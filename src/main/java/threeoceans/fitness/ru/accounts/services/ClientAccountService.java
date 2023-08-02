@@ -1,6 +1,7 @@
 package threeoceans.fitness.ru.accounts.services;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import threeoceans.fitness.ru.accounts.converters.ClientInfoConverter;
@@ -13,7 +14,7 @@ import threeoceans.fitness.ru.accounts.repositories.ClientAccountRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ClientAccountService {
@@ -62,6 +63,7 @@ public class ClientAccountService {
             sub.setExpired(subRequest.getExpired());
         }else{
             sub=new Subscription();
+            sub.setReserved(0);
             sub.setClient(client);
             sub.setNumOfWorkouts(subRequest.getNumOfWorkouts());
             sub.setDiscipline(subRequest.getDiscipline());
@@ -116,6 +118,8 @@ public class ClientAccountService {
     public void unsunscribeAtEvent(Long subId){
         Subscription sub = subscriptionService.findById(subId);
         sub.setReserved(sub.getReserved()-1);
+        subscriptionService.save(sub);
+
     }
 
     public void  confirmWorkout(Long subId){
