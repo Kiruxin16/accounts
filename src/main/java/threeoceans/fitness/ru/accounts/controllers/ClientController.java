@@ -40,7 +40,7 @@ public class ClientController {
 
 
     @PostMapping("/subscriptions/unsubscribe/{subId}")
-    public void unsubscribeEvent(@PathVariable ("subId")Long subId){
+    public void unsubscribeEvent(@PathVariable (name="subId")Long subId){
         clientAccountService.unsunscribeAtEvent(subId);
     }
 
@@ -54,8 +54,8 @@ public class ClientController {
 
 
     }
-    @PostMapping("subscriptions/confirm")
-    public void confirmArrival(@RequestParam(name = "subId")Long subId){
+    @PostMapping("subscriptions/confirm/{subId}")
+    public void confirmArrival(@PathVariable(name = "subId")Long subId){
         clientAccountService.confirmWorkout(subId);
     }
 
