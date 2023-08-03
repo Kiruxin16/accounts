@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Builder
 public class SubscriptionToProductRequest {
 
-    private String client;
+    private String login;
 
     private String discipline;
 
