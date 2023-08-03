@@ -39,24 +39,23 @@ public class ClientController {
     }
 
 
-    @PostMapping("/subscriptions/unsubscribe")
-    public void unsubscribeEvent(@RequestParam ("subId")Long subId){
-        clientAccountService.unsunscribeAtEvent(subId);
+    @PostMapping("/subscriptions/unsubscribe/{subId}")
+    public void unsubscribeEvent(@PathVariable (name="subId")Long subId){
+        clientAccountService.unsubscribeAtEvent(subId);
     }
 
     @PostMapping("/subscriptions/subscribe")
-    public subSceduleResponse subscribeEvent(@RequestParam("login")String login,
-                                             @RequestParam("discipline")String discipline){
+    public SubScheduleResponse subscribeEvent(@RequestBody SubScheduleRequest subRequest){
         try{
-            return clientAccountService.subscribeAtEvent(login,discipline);
+            return clientAccountService.subscribeAtEvent(subRequest.getLogin(),subRequest.getDiscipline());
         }catch (Exception e){
             return null;
         }
 
 
     }
-    @PostMapping("subscriptions/confirm")
-    public void confirmArrival(@RequestParam(name = "subId")Long subId){
+    @PostMapping("subscriptions/confirm/{subId}")
+    public void confirmArrival(@PathVariable(name = "subId")Long subId){
         clientAccountService.confirmWorkout(subId);
     }
 

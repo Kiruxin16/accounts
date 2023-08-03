@@ -2,19 +2,13 @@ package threeoceans.fitness.ru.accounts.dto;
 
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class ClientInfoRequest {
-
+public class SubScheduleRequest {
     private String login;
-
-    private  String username;
-
-    private String phone;
-
-    private  String email;
+    private String discipline;
 }

@@ -1,6 +1,7 @@
 package threeoceans.fitness.ru.accounts.services;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import threeoceans.fitness.ru.accounts.converters.ClientInfoConverter;
@@ -10,12 +11,10 @@ import threeoceans.fitness.ru.accounts.entities.ClientAccount;
 import threeoceans.fitness.ru.accounts.entities.Subscription;
 import threeoceans.fitness.ru.accounts.repositories.ClientAccountRepository;
 
-import javax.swing.plaf.SeparatorUI;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.stream.Collectors;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ClientAccountService {
@@ -42,7 +41,7 @@ public class ClientAccountService {
         if (account.isEmpty()){
             resultAccount = new ClientAccount();
             resultAccount.setLogin(infoRequest.getLogin());
-            resultAccount.setKeypass(String.valueOf(infoRequest.getLogin().hashCode()));
+            resultAccount.setKeypass(String.valueOf(Math.abs(infoRequest.getLogin().hashCode())));
         } else {
             resultAccount=account.get();
         }
@@ -64,6 +63,7 @@ public class ClientAccountService {
             sub.setExpired(subRequest.getExpired());
         }else{
             sub=new Subscription();
+            sub.setReserved(0);
             sub.setClient(client);
             sub.setNumOfWorkouts(subRequest.getNumOfWorkouts());
             sub.setDiscipline(subRequest.getDiscipline());
@@ -80,15 +80,18 @@ public class ClientAccountService {
     }
 
     @Transactional
-    public subSceduleResponse subscribeAtEvent(String login, String discipline) throws Exception{
-        Subscription sub = getSubscription(login,discipline).orElseThrow(()-> new Exception() );
+    public SubScheduleResponse subscribeAtEvent(String login, String discipline) throws Exception{
+        ClientAccount client =clientAccountRepository.findByLogin(login).get();
+        Subscription sub = client.getSubscriptions().stream()
+                .filter(s -> discipline.equals(s.getDiscipline())).findFirst()
+                .orElseThrow(()-> new Exception() );
         sub.setReserved(sub.getReserved()+1);
         if (sub.getNumOfWorkouts()< sub.getReserved()){
             throw new Exception(); //количество тренировок не может быть меньше количества зарезервированных
         }
 
         subscriptionService.save(sub);
-        return new subSceduleResponse(sub.getId(),login);
+        return new SubScheduleResponse(sub.getId(),client.getUsername());
     }
 
     @Transactional
@@ -112,9 +115,11 @@ public class ClientAccountService {
 
     }
 
-    public void unsunscribeAtEvent(Long subId){
+    public void unsubscribeAtEvent(Long subId){
         Subscription sub = subscriptionService.findById(subId);
         sub.setReserved(sub.getReserved()-1);
+        subscriptionService.save(sub);
+
     }
 
     public void  confirmWorkout(Long subId){
