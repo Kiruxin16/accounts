@@ -34,7 +34,7 @@ public class ClientController {
 
 
     @PostMapping("/subscriptions/add")
-    public void addSubscription(@RequestHeader(name = "login")String login,  @RequestBody SubscriptionRequest subRequest){
+    public void addSubscription(@RequestBody SubscriptionToProductRequest subRequest){
         clientAccountService.addSubscription(subRequest);
     }
 

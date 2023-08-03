@@ -52,7 +52,7 @@ public class ClientAccountService {
     }
 
     @Transactional
-    public void addSubscription(SubscriptionRequest subRequest){
+    public void addSubscription(SubscriptionToProductRequest subRequest){
         ClientAccount client = clientAccountRepository.findByLogin(subRequest.getClient()).get();
         Subscription sub;
         Optional<Subscription> subOpt=client.getSubscriptions().stream()
