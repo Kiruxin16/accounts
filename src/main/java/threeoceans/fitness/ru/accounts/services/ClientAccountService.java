@@ -115,7 +115,7 @@ public class ClientAccountService {
 
     }
 
-    public void unsunscribeAtEvent(Long subId){
+    public void unsubscribeAtEvent(Long subId){
         Subscription sub = subscriptionService.findById(subId);
         sub.setReserved(sub.getReserved()-1);
         subscriptionService.save(sub);
