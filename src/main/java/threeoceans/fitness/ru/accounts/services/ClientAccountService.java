@@ -2,6 +2,8 @@ package threeoceans.fitness.ru.accounts.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import threeoceans.fitness.ru.accounts.converters.ClientInfoConverter;
@@ -9,6 +11,8 @@ import threeoceans.fitness.ru.accounts.converters.SubscriptionConverter;
 import threeoceans.fitness.ru.accounts.dto.*;
 import threeoceans.fitness.ru.accounts.entities.ClientAccount;
 import threeoceans.fitness.ru.accounts.entities.Subscription;
+import threeoceans.fitness.ru.accounts.exceptions.ReservationException;
+import threeoceans.fitness.ru.accounts.exceptions.ResourceNotFoundException;
 import threeoceans.fitness.ru.accounts.repositories.ClientAccountRepository;
 
 import java.util.List;
@@ -80,18 +84,19 @@ public class ClientAccountService {
     }
 
     @Transactional
-    public SubScheduleResponse subscribeAtEvent(String login, String discipline) throws Exception{
+    public ResponseEntity<?> subscribeAtEvent(String login, String discipline) {
         ClientAccount client =clientAccountRepository.findByLogin(login).get();
         Subscription sub = client.getSubscriptions().stream()
                 .filter(s -> discipline.equals(s.getDiscipline())).findFirst()
-                .orElseThrow(()-> new Exception() );
-        sub.setReserved(sub.getReserved()+1);
-        if (sub.getNumOfWorkouts()< sub.getReserved()){
-            throw new Exception(); //количество тренировок не может быть меньше количества зарезервированных
+                .orElseThrow(()-> new ResourceNotFoundException("У пользователя нет подходящего абонемента.") );
+
+        if (sub.getNumOfWorkouts()<= sub.getReserved()){
+            throw new ReservationException("количество доступных тренировок не может быть меньше количества зарезервированных.");
         }
+        sub.setReserved(sub.getReserved()+1);
 
         subscriptionService.save(sub);
-        return new SubScheduleResponse(sub.getId(),client.getUsername());
+        return new ResponseEntity<>(new SubScheduleResponse(sub.getId(),client.getUsername()), HttpStatus.OK);
     }
 
     @Transactional
