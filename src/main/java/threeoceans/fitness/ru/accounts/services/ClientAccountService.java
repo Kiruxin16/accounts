@@ -100,15 +100,15 @@ public class ClientAccountService {
     }
 
     @Transactional
-    public void changeNumOfWorkouts(String login, String discipline, int delta) throws Exception{
-        Subscription sub = getSubscription(login,discipline).orElseThrow(()-> new Exception() );
+    public ResponseEntity<?> changeNumOfWorkouts(String login, String discipline, int delta){
+        Subscription sub = getSubscription(login,discipline)
+                .orElseThrow(()-> new ResourceNotFoundException("учетная запись не найдена. обратитесь в техподдерку")  );
         sub.setNumOfWorkouts(sub.getNumOfWorkouts()+delta);
         if (sub.getNumOfWorkouts()< sub.getReserved()){
-            throw new Exception(); //количество тренировок не может быть меньше количества зарезервированных
-
+            throw new ReservationException("количество тренировок не может быть меньше количества зарезервированных");
         }
         if (sub.getNumOfWorkouts()<0){
-            throw new Exception(); //у пользователя нет столько тренировок
+            throw new ResourceNotFoundException("у пользователя нет столько тренировок");
         }
 
         if (sub.getNumOfWorkouts()==0){
@@ -117,7 +117,7 @@ public class ClientAccountService {
             subscriptionService.save(sub);
         }
 
-
+        return ResponseEntity.ok("изменено");
     }
 
     public void unsubscribeAtEvent(Long subId){

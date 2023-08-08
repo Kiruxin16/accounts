@@ -55,17 +55,12 @@ public class ClientController {
     }
 
     @PostMapping("/subscriptions/change")
-    public void changeNumOfWOuts(
+    public ResponseEntity<?> changeNumOfWOuts(
             @RequestParam(name = "login")String login,
             @RequestParam("discipline")String disciplineName,
             @RequestParam("delta")int delta
     ){
-        try{
-            clientAccountService.changeNumOfWorkouts(login,disciplineName,delta);
-        }catch (Exception e){
-
-        }
-
+        return clientAccountService.changeNumOfWorkouts(login,disciplineName,delta);
     }
 
 }
