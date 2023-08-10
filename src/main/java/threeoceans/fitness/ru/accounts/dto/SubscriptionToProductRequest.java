@@ -9,9 +9,9 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @Builder
-public class SubscriptionRequest {
+public class SubscriptionToProductRequest {
 
-    private String client;
+    private String login;
 
     private String discipline;
 

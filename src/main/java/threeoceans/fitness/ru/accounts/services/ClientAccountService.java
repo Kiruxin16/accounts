@@ -2,6 +2,8 @@ package threeoceans.fitness.ru.accounts.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import threeoceans.fitness.ru.accounts.converters.ClientInfoConverter;
@@ -9,6 +11,8 @@ import threeoceans.fitness.ru.accounts.converters.SubscriptionConverter;
 import threeoceans.fitness.ru.accounts.dto.*;
 import threeoceans.fitness.ru.accounts.entities.ClientAccount;
 import threeoceans.fitness.ru.accounts.entities.Subscription;
+import threeoceans.fitness.ru.accounts.exceptions.ReservationException;
+import threeoceans.fitness.ru.accounts.exceptions.ResourceNotFoundException;
 import threeoceans.fitness.ru.accounts.repositories.ClientAccountRepository;
 
 import java.util.List;
@@ -52,8 +56,8 @@ public class ClientAccountService {
     }
 
     @Transactional
-    public void addSubscription(SubscriptionRequest subRequest){
-        ClientAccount client = clientAccountRepository.findByLogin(subRequest.getClient()).get();
+    public void addSubscription(SubscriptionToProductRequest subRequest){
+        ClientAccount client = clientAccountRepository.findByLogin(subRequest.getLogin()).get();
         Subscription sub;
         Optional<Subscription> subOpt=client.getSubscriptions().stream()
                 .filter(s ->subRequest.getDiscipline().equals(s.getDiscipline())).findFirst();
@@ -80,30 +84,31 @@ public class ClientAccountService {
     }
 
     @Transactional
-    public SubScheduleResponse subscribeAtEvent(String login, String discipline) throws Exception{
+    public ResponseEntity<?> subscribeAtEvent(String login, String discipline) {
         ClientAccount client =clientAccountRepository.findByLogin(login).get();
         Subscription sub = client.getSubscriptions().stream()
                 .filter(s -> discipline.equals(s.getDiscipline())).findFirst()
-                .orElseThrow(()-> new Exception() );
-        sub.setReserved(sub.getReserved()+1);
-        if (sub.getNumOfWorkouts()< sub.getReserved()){
-            throw new Exception(); //количество тренировок не может быть меньше количества зарезервированных
+                .orElseThrow(()-> new ResourceNotFoundException("У пользователя нет подходящего абонемента.") );
+
+        if (sub.getNumOfWorkouts()<= sub.getReserved()){
+            throw new ReservationException("количество доступных тренировок не может быть меньше количества зарезервированных.");
         }
+        sub.setReserved(sub.getReserved()+1);
 
         subscriptionService.save(sub);
-        return new SubScheduleResponse(sub.getId(),client.getUsername());
+        return new ResponseEntity<>(new SubScheduleResponse(sub.getId(),client.getUsername()), HttpStatus.OK);
     }
 
     @Transactional
-    public void changeNumOfWorkouts(String login, String discipline, int delta) throws Exception{
-        Subscription sub = getSubscription(login,discipline).orElseThrow(()-> new Exception() );
+    public ResponseEntity<?> changeNumOfWorkouts(String login, String discipline, int delta){
+        Subscription sub = getSubscription(login,discipline)
+                .orElseThrow(()-> new ResourceNotFoundException("учетная запись не найдена. обратитесь в техподдерку")  );
         sub.setNumOfWorkouts(sub.getNumOfWorkouts()+delta);
         if (sub.getNumOfWorkouts()< sub.getReserved()){
-            throw new Exception(); //количество тренировок не может быть меньше количества зарезервированных
-
+            throw new ReservationException("количество тренировок не может быть меньше количества зарезервированных");
         }
         if (sub.getNumOfWorkouts()<0){
-            throw new Exception(); //у пользователя нет столько тренировок
+            throw new ResourceNotFoundException("у пользователя нет столько тренировок");
         }
 
         if (sub.getNumOfWorkouts()==0){
@@ -112,7 +117,7 @@ public class ClientAccountService {
             subscriptionService.save(sub);
         }
 
-
+        return ResponseEntity.ok("изменено");
     }
 
     public void unsubscribeAtEvent(Long subId){

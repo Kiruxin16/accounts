@@ -11,7 +11,9 @@ import java.time.LocalDate;
 @Builder
 public class SubscriptionResponse {
 
-    private String discipline;
+    private  Long id;
+
+    private String disciplineName;
 
     private Integer numOfWorkouts;
 
