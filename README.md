@@ -51,7 +51,9 @@
 - [Subscription service](https://github.com/DenisPugaev/Fitness-Services)
 - [Schedule service](https://github.com/Kiruxin16/schedule)
 
-Взаимодействие с приложение осуществляется через [фронт-энд](https://github.com/AlexanderNaide/FitnessClub). Для подключения требуется набрать в адресной строке браузера http://localhost:3000/index.html 
+Взаимодействие с приложение осуществляется через [фронт-энд](https://github.com/AlexanderNaide/FitnessClub). Для подключения требуется набрать в адресной строке браузера http://localhost:3000/index.html
+
+# Возможности проекта
 
 
 
