@@ -40,5 +40,18 @@
 
 ![image](https://github.com/Kiruxin16/accounts/assets/94542550/132e2188-34c1-484f-a715-0ceae2dbc813)
 
+Параметры для сервера:
+- login: posgres
+- password: 123
+
+Далее требуется запустить все сервисы приложения (в любом порядке)
+- [Gateway service](https://github.com/NikitaLubimov/GateWay)
+- [Authorization service](https://github.com/NikitaLubimov/Auth-Service)
+- [Account service](https://github.com/Kiruxin16/accounts)
+- [Subscription service](https://github.com/DenisPugaev/Fitness-Services)
+- [Schedule service](https://github.com/Kiruxin16/schedule)
+
+Взаимодействие с приложение осуществляется через [фронт-энд](https://github.com/AlexanderNaide/FitnessClub). Для подключения требуется набрать в адресной строке браузера http://localhost:3000/index.html 
+
 
 
