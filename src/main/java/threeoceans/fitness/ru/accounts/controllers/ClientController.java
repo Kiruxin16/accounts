@@ -2,6 +2,7 @@ package threeoceans.fitness.ru.accounts.controllers;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import threeoceans.fitness.ru.accounts.dto.*;
 import threeoceans.fitness.ru.accounts.services.ClientAccountService;
@@ -34,7 +35,7 @@ public class ClientController {
 
 
     @PostMapping("/subscriptions/add")
-    public void addSubscription(@RequestHeader(name = "login")String login,  @RequestBody SubscriptionRequest subRequest){
+    public void addSubscription(@RequestBody SubscriptionToProductRequest subRequest){
         clientAccountService.addSubscription(subRequest);
     }
 
@@ -45,14 +46,8 @@ public class ClientController {
     }
 
     @PostMapping("/subscriptions/subscribe")
-    public SubScheduleResponse subscribeEvent(@RequestBody SubScheduleRequest subRequest){
-        try{
-            return clientAccountService.subscribeAtEvent(subRequest.getLogin(),subRequest.getDiscipline());
-        }catch (Exception e){
-            return null;
-        }
-
-
+    public ResponseEntity<?> subscribeEvent(@RequestBody SubScheduleRequest subRequest){
+        return clientAccountService.subscribeAtEvent(subRequest.getLogin(),subRequest.getDiscipline());
     }
     @PostMapping("subscriptions/confirm/{subId}")
     public void confirmArrival(@PathVariable(name = "subId")Long subId){
@@ -60,17 +55,12 @@ public class ClientController {
     }
 
     @PostMapping("/subscriptions/change")
-    public void changeNumOfWOuts(
+    public ResponseEntity<?> changeNumOfWOuts(
             @RequestParam(name = "login")String login,
             @RequestParam("discipline")String disciplineName,
             @RequestParam("delta")int delta
     ){
-        try{
-            clientAccountService.changeNumOfWorkouts(login,disciplineName,delta);
-        }catch (Exception e){
-
-        }
-
+        return clientAccountService.changeNumOfWorkouts(login,disciplineName,delta);
     }
 
 }
